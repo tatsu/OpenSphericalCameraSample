@@ -6,7 +6,7 @@ target 'OpenSphericalCameraSample' do
   use_frameworks!
 
   # Pods for OpenSphericalCameraSample
-  pod 'OpenSphericalCamera', '~> 1.0.1'
+  pod 'OpenSphericalCamera', '~> 2.0.0.beta.1'
 
   target 'OpenSphericalCameraSampleTests' do
     inherit! :search_paths
