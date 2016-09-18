@@ -27,17 +27,17 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
 
-    @IBAction func connectPressed(sender: UIButton) {
+    @IBAction func connectPressed(_ sender: UIButton) {
         if connected {
-            connectButton.setTitle("Connect", forState: .Normal)
+            connectButton.setTitle("Connect", for: UIControlState())
             connected = false
             return
         }
 
         // Set OSC API level 2 (for Ricoh THETA S)
         self.osc.startSession { (data, response, error) in
-            if let data = data where error == nil {
-                if let jsonDic = try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary, results = jsonDic["results"] as? NSDictionary, sessionId = results["sessionId"] as? String {
+            if let data = data , error == nil {
+                if let jsonDic = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary, let results = jsonDic["results"] as? NSDictionary, let sessionId = results["sessionId"] as? String {
                     self.osc.setOptions(sessionId: sessionId, options: ["clientVersion": 2]) { (data, response, error) in
                         self.osc.closeSession(sessionId: sessionId) { (data, response, error) in
                             self.startLivePreview()
@@ -53,24 +53,24 @@ class ViewController: UIViewController {
             }
         }
 
-        sender.setTitle("Disconnect", forState: .Normal)
+        sender.setTitle("Disconnect", for: UIControlState())
         connected = true
     }
 
-    @IBAction func shutterPressed(sender: UIButton) {
-        sender.enabled = false
+    @IBAction func shutterPressed(_ sender: UIButton) {
+        sender.isEnabled = false
 
         self.osc.takePicture { (data, response, error) in
-            if let data = data where error == nil {
-                let jsonDic = try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
-                if let jsonDic = jsonDic, rawState = jsonDic["state"] as? String, state = OSCCommandState(rawValue: rawState) {
+            if let data = data , error == nil {
+                let jsonDic = try? JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers) as! NSDictionary
+                if let jsonDic = jsonDic, let rawState = jsonDic["state"] as? String, let state = OSCCommandState(rawValue: rawState) {
                     switch state {
                     case .InProgress:
                         assertionFailure()
                     case .Done:
-                        if let results = jsonDic["results"] as? NSDictionary, fileUrl = results["fileUrl"] as? String {
+                        if let results = jsonDic["results"] as? NSDictionary, let fileUrl = results["fileUrl"] as? String {
                             self.osc.get(fileUrl) { (data, response, error) in
-                                dispatch_async(dispatch_get_main_queue()) {
+                                DispatchQueue.main.async {
                                     self.previewView.image = UIImage(data: data!)
                                 }
                                 self.startLivePreview()
@@ -81,8 +81,8 @@ class ViewController: UIViewController {
                     }
                 }
             }
-            dispatch_async(dispatch_get_main_queue()) {
-                sender.enabled = true
+            DispatchQueue.main.async {
+                sender.isEnabled = true
             }
         }
     }
@@ -90,8 +90,8 @@ class ViewController: UIViewController {
     func startLivePreview() {
         // Live Preview
         self.osc.getLivePreview { (data, response, error) in
-            if let data = data where error == nil {
-                dispatch_async(dispatch_get_main_queue()) {
+            if let data = data , error == nil {
+                DispatchQueue.main.async {
                     self.liveView.image = UIImage(data: data)
                 }
             }
