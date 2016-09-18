@@ -3,8 +3,8 @@ A sample iOS application that shows how to use features of OpenSphericalCamera
 
 ## Requirements
 
-* Swift 2.2+
-* Xcode 7.3+
+* Swift 3.0+
+* Xcode 8.0+
 
 ## Setup
 
@@ -21,7 +21,7 @@ pod install
 ## References
 * [OpenSphericalCamera Client in Swift](https://github.com/tatsu/OpenSphericalCamera)
 * [Open Spherical Camera API](https://developers.google.com/streetview/open-spherical-camera/)
-* [Ricoh THETA API v2](https://developers.theta360.com/en/docs/v2/api_reference/)
+* [Ricoh THETA API v2.1](https://developers.theta360.com/en/docs/v2.1/api_reference/)
 
 ## License
 
